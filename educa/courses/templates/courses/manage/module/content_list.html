@@ -40,7 +40,7 @@
               Редактировать
             </a>
             <form action="{% url "module_content_delete" content.id %}" method="post">
-              <input type="submit" value="Delete">
+              <input type="submit" value="Удалить">
               {% csrf_token %}
             </form>
             {% endwith %}
