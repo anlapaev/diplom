@@ -1,0 +1,26 @@
+# config/nginx/default.conf.template
+
+# upstream для uWSGI
+upstream uwsgi_app {
+    server unix:/code/uwsgi_app.sock;
+}
+
+server {
+    listen 80;
+    server_name localhost;
+
+    # Прокидываем всё, что не statics, в uWSGI
+    location / {
+        include /etc/nginx/uwsgi_params;
+        uwsgi_pass uwsgi_app;
+    }
+
+    # статика:
+    location /static/ {
+        alias /code/educa/static/;
+    }
+
+    location /media/ {
+        alias /code/educa/media/;
+    }
+}
