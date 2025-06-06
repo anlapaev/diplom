@@ -15,14 +15,14 @@
         <a href="{% url "course_list_subject" subject.slug %}">
         {{ subject.title }}</a>.
         {{ object.modules.count }} модули.
-        Преподаватель: {{ object.owner.get_full_name }}
+        Преподаватель: {{ object.owner.get_full_name|default:object.owner.username }}
       </p>
       {{ object.overview|linebreaks }}
       {% if request.user.is_authenticated %}
         <form action="{% url "student_enroll_course" %}" method="post">
           {{ enroll_form }}
           {% csrf_token %}
-          <input type="submit" value="Enroll now">
+          <input type="submit" value="Записаться">
         </form>
       {% else %}
         <a href="{% url "student_registration" %}" class="button">
