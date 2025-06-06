@@ -11,6 +11,12 @@
       <a href="/" class="logo">GoStack</a>
       <ul class="menu">
         {% if request.user.is_authenticated %}
+          {% if perms.courses.view_course %}
+            <li><a href="{% url 'manage_course_list' %}">Управление курсами</a></li>
+          {% endif %}
+          {% if perms.courses.add_course %}
+            <li><a href="{% url 'course_create' %}">Создать курс</a></li>
+          {% endif %}
           <li>
             <form action="{% url "logout" %}" method="post">
               <button type="submit">Выйти из системы</button>
