@@ -8,8 +8,8 @@ from .fields import OrderField
 
 
 class Subject(models.Model):
-    title = models.CharField(max_length=200)
-    slug = models.SlugField(max_length=200, unique=True)
+    title = models.CharField('Название', max_length=200)
+    slug = models.SlugField('Адрес', max_length=200, unique=True)
 
     class Meta:
         ordering = ['title']
@@ -25,9 +25,9 @@ class Course(models.Model):
     subject = models.ForeignKey(
         Subject, related_name='courses', on_delete=models.CASCADE
     )
-    title = models.CharField(max_length=200)
-    slug = models.SlugField(max_length=200, unique=True)
-    overview = models.TextField()
+    title = models.CharField('Название', max_length=200)
+    slug = models.SlugField('Адрес', max_length=200, unique=True)
+    overview = models.TextField('Описание')
     created = models.DateTimeField(auto_now_add=True)
     students = models.ManyToManyField(
         User, related_name='courses_joined', blank=True
@@ -42,11 +42,12 @@ class Course(models.Model):
 
 class Module(models.Model):
     course = models.ForeignKey(
-        Course, related_name='modules', on_delete=models.CASCADE
+        Course, related_name='modules', on_delete=models.CASCADE,
+        verbose_name='Курс'
     )
-    title = models.CharField(max_length=200)
-    description = models.TextField(blank=True)
-    order = OrderField(blank=True, for_fields=['course'])
+    title = models.CharField('Название', max_length=200)
+    description = models.TextField('Описание', blank=True)
+    order = OrderField('Порядок', blank=True, for_fields=['course'])
 
     class Meta:
         ordering = ['order']
@@ -76,9 +77,10 @@ class Content(models.Model):
 
 class ItemBase(models.Model):
     owner = models.ForeignKey(
-        User, related_name='%(class)s_related', on_delete=models.CASCADE
+        User, related_name='%(class)s_related', on_delete=models.CASCADE,
+        verbose_name='Автор'
     )
-    title = models.CharField(max_length=250)
+    title = models.CharField('Название', max_length=250)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
@@ -96,16 +98,16 @@ class ItemBase(models.Model):
 
 
 class Text(ItemBase):
-    content = models.TextField()
+    content = models.TextField('Содержание')
 
 
 class File(ItemBase):
-    file = models.FileField(upload_to='files')
+    file = models.FileField('Файл', upload_to='files')
 
 
 class Image(ItemBase):
-    file = models.FileField(upload_to='images')
+    file = models.FileField('Изображение', upload_to='images')
 
 
 class Video(ItemBase):
-    url = models.URLField()
+    url = models.URLField('URL видео')
