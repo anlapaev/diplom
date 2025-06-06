@@ -17,7 +17,7 @@
   </div>
   <div id="chat-input">
     <input id="chat-message-input" type="text">
-    <input id="chat-message-submit" type="submit" value="Send">
+    <input id="chat-message-submit" type="submit" value="Отправить">
   </div>
 {% endblock %}
 
@@ -42,10 +42,10 @@
     const chat = document.getElementById('chat');
 
     const dateOptions = {hour: 'numeric', minute: 'numeric', hour12: true};
-    const datetime = new Date(data.datetime).toLocaleString('en', dateOptions);
+    const datetime = new Date(data.datetime).toLocaleString('ru', dateOptions);
     const isMe = data.user === requestUser;
     const source = isMe ? 'me' : 'other';
-    const name = isMe ? 'Me' : data.user;
+    const name = isMe ? 'Я' : data.user;
 
     chat.innerHTML += '<div class="message ' + source + '">' +
                       '<strong>' + name + '</strong> ' +
@@ -55,7 +55,7 @@
   };
 
   chatSocket.onclose = function(event) {
-    console.error('Chat socket closed unexpectedly');
+    console.error('Соединение чата было неожиданно закрыто');
   };
 
   const input = document.getElementById('chat-message-input');
