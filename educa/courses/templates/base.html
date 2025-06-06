@@ -3,12 +3,12 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>{% block title %}GoStack{% endblock %}</title>
+    <title>{% block title %}Эдука{% endblock %}</title>
     <link href="{% static "css/base.css" %}" rel="stylesheet">
   </head>
   <body>
     <div id="header">
-      <a href="/" class="logo">GoStack</a>
+      <a href="/" class="logo">Эдука</a>
       <ul class="menu">
         {% if request.user.is_authenticated %}
           {% if perms.courses.view_course %}
