@@ -33,7 +33,8 @@
   const requestUser = JSON.parse(
     document.getElementById('request-user').textContent
   );
-  const url = 'wss://' + window.location.host +
+  const scheme = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
+  const url = scheme + window.location.host +
               '/ws/chat/room/' + courseId + '/';
   const chatSocket = new WebSocket(url);
 
