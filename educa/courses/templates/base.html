@@ -17,6 +17,7 @@
           {% if perms.courses.add_course %}
             <li><a href="{% url 'course_create' %}">Создать курс</a></li>
           {% endif %}
+          <li><a href="{% url 'student_course_list' %}">Мои курсы</a></li>
           <li>
             <form action="{% url "logout" %}" method="post">
               <button type="submit">Выйти из системы</button>
