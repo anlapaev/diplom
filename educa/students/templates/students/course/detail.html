@@ -6,9 +6,13 @@
 {% endblock %}
 
 {% block content %}
-  <h1>
-    {{ module.title }}
-  </h1>
+  {% if module %}
+    <h1>
+      {{ module.title }}
+    </h1>
+  {% else %}
+    <h1>В курсе пока нет модулей</h1>
+  {% endif %}
   <div class="contents">
     <h3>Модули</h3>
     <ul id="modules">
@@ -32,14 +36,18 @@
       </a>
     </h3>
   </div>
-  <div class="module">
-    {% cache 600 module_contents module %}
-      {% for content in module.contents.all %}
-        {% with item=content.item %}
-          <h2>{{ item.title }}</h2>
-          {{ item.render }}
-        {% endwith %}
-      {% endfor %}
-    {% endcache %}
-  </div>
+  {% if module %}
+    <div class="module">
+      {% cache 600 module_contents module %}
+        {% for content in module.contents.all %}
+          {% with item=content.item %}
+            <h2>{{ item.title }}</h2>
+            {{ item.render }}
+          {% endwith %}
+        {% empty %}
+          <p>Материалов пока нет.</p>
+        {% endfor %}
+      {% endcache %}
+    </div>
+  {% endif %}
 {% endblock %}

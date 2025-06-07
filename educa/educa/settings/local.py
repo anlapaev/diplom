@@ -1,5 +1,9 @@
 from .base import *
 
+# Allow local origins so WebSocket connections succeed when using
+# AllowedHostsOriginValidator in ASGI.
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+
 DEBUG = True
 
 DATABASES = {

@@ -61,12 +61,15 @@ class StudentCourseDetailView(LoginRequiredMixin, DetailView):
         context = super().get_context_data(**kwargs)
         # get course object
         course = self.get_object()
-        if 'module_id' in self.kwargs:
-            # get current module
-            context['module'] = course.modules.get(
-                id=self.kwargs['module_id']
-            )
+        if course.modules.exists():
+            if 'module_id' in self.kwargs:
+                # get current module
+                context['module'] = course.modules.get(
+                    id=self.kwargs['module_id']
+                )
+            else:
+                # get first module
+                context['module'] = course.modules.first()
         else:
-            # get first module
-            context['module'] = course.modules.all()[0]
+            context['module'] = None
         return context
