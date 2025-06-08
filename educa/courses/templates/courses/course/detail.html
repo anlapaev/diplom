@@ -19,11 +19,20 @@
       </p>
       {{ object.overview|linebreaks }}
       {% if request.user.is_authenticated %}
-        <form action="{% url "student_enroll_course" %}" method="post">
-          {{ enroll_form }}
-          {% csrf_token %}
-          <input type="submit" value="Записаться">
-        </form>
+        {% if is_enrolled %}
+          <p>
+            Вы уже записаны на этот курс.
+            <a href="{% url "student_course_detail" object.id %}" class="button">
+              Перейти к материалам
+            </a>
+          </p>
+        {% else %}
+          <form action="{% url "student_enroll_course" %}" method="post">
+            {{ enroll_form }}
+            {% csrf_token %}
+            <input type="submit" value="Записаться">
+          </form>
+        {% endif %}
       {% else %}
         <a href="{% url "student_registration" %}" class="button">
           Зарегистрируйтесь, чтобы записаться
