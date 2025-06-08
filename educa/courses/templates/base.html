@@ -19,9 +19,9 @@
           {% endif %}
           <li><a href="{% url 'student_course_list' %}">Мои курсы</a></li>
           <li>
-            <form action="{% url "logout" %}" method="post">
-              <button type="submit">Выйти из системы</button>
+            <form action="{% url 'logout' %}" method="post">
               {% csrf_token %}
+              <button type="submit">Выйти из системы</button>
             </form>
           </li>
         {% else %}
