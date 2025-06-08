@@ -8,7 +8,7 @@
     {% for course in object_list %}
       <div class="course-info">
         <h3>{{ course.title }}</h3>
-        <p>
+        <p class="course-actions">
           <a href="{% url "course_edit" course.id %}">Редактировать</a>
           <a href="{% url "course_delete" course.id %}">Удалить</a>
           <a href="{% url "course_module_update" course.id %}">Редактирование модулей</a>
