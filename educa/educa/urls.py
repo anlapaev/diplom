@@ -21,12 +21,17 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
-from .views import LogoutViewAllowGet
+from .views import LogoutViewAllowGet, UserRegistrationView
 from django.urls import include, path
 
 urlpatterns = [
     path(
         'accounts/login/', auth_views.LoginView.as_view(), name='login'
+    ),
+    path(
+        'accounts/register/',
+        UserRegistrationView.as_view(),
+        name='register',
     ),
     path(
         'accounts/logout/',
