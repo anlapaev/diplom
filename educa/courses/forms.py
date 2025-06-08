@@ -16,6 +16,6 @@ ModuleFormSet = inlineformset_factory(
     Module,
     formset=ModuleBaseFormSet,
     fields=['title', 'description'],
-    extra=10,
+    extra=0,
     can_delete=True,
 )
