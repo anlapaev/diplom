@@ -11,12 +11,29 @@
     <form method="post">
       {{ formset.management_form }}
       {% csrf_token %}
-      <ul id="course-modules">
+      <ul id="course-modules" data-prefix="{{ formset.prefix }}">
         {% for form in formset %}
           <li>{{ form.as_p }}</li>
         {% endfor %}
+        <li id="empty-form" class="hidden">{{ formset.empty_form.as_p }}</li>
       </ul>
+      <a href="#" id="add-module" class="secondary-button">Добавить модуль</a>
       <input type="submit" value="Сохранить модули">
     </form>
   </div>
+{% endblock %}
+
+{% block domready %}
+  document.querySelector('#add-module').addEventListener('click', function(e) {
+    e.preventDefault();
+    const modules = document.querySelector('#course-modules');
+    const prefix = modules.dataset.prefix;
+    const totalForms = document.querySelector('#id_' + prefix + '-TOTAL_FORMS');
+    const formCount = parseInt(totalForms.value, 10);
+    const empty = document.querySelector('#empty-form');
+    const newForm = document.createElement('li');
+    newForm.innerHTML = empty.innerHTML.replace(/__prefix__/g, formCount);
+    modules.insertBefore(newForm, empty);
+    totalForms.value = formCount + 1;
+  });
 {% endblock %}
