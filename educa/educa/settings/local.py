@@ -1,3 +1,4 @@
+from decouple import config
 from .base import *
 
 # Allow local origins so WebSocket connections succeed when using
@@ -30,11 +31,11 @@ CHANNEL_LAYERS = {
     },
 }
 
-# Параметры отправки писем через Яндекс
+# Email configuration for password reset and other emails
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.yandex.ru'
-EMAIL_PORT = 465               # или 587 при использовании TLS
-EMAIL_USE_SSL = True           # для порта 465
-EMAIL_HOST_USER = 'anlapaev1@yandex.ru'
-EMAIL_HOST_PASSWORD = 'uoblncntzgsamcvu'
+EMAIL_PORT = 465
+EMAIL_USE_SSL = True
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
