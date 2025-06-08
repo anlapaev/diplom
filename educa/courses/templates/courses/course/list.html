@@ -27,7 +27,10 @@
           <a href="{% url "course_list_subject" s.slug %}">
             {{ s.title }}
             <br>
-            <span>{{ s.total_courses }} курс</span>
+            <span>
+              {{ s.total_courses }}
+              {{ s.total_courses|rupluralize:"курс,курса,курсов" }}
+            </span>
           </a>
         </li>
       {% endfor %}
@@ -43,7 +46,8 @@
         </h3>
         <p>
           <a href="{% url "course_list_subject" subject.slug %}">{{ subject }}</a>.
-            {{ course.total_modules }} модули.
+            {{ course.total_modules }}
+            {{ course.total_modules|rupluralize:"модуль,модуля,модулей" }}.
             Преподаватель: {{ course.owner.get_full_name|default:course.owner.username }}
         </p>
       {% endwith %}

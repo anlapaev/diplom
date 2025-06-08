@@ -14,7 +14,8 @@
       <p>
         <a href="{% url "course_list_subject" subject.slug %}">
         {{ subject.title }}</a>.
-        {{ object.modules.count }} модули.
+        {{ object.modules.count }}
+        {{ object.modules.count|rupluralize:"модуль,модуля,модулей" }}.
         Преподаватель: {{ object.owner.get_full_name|default:object.owner.username }}
       </p>
       {{ object.overview|linebreaks }}
