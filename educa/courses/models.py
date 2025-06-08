@@ -47,7 +47,7 @@ class Module(models.Model):
     )
     title = models.CharField('Название', max_length=200)
     description = models.TextField('Описание', blank=True)
-    order = OrderField('Порядок', blank=True, for_fields=['course'])
+    order = OrderField(verbose_name='Порядок', blank=True, for_fields=['course'])
 
     class Meta:
         ordering = ['order']
