@@ -130,6 +130,15 @@ class ModuleLessonUpdateView(TemplateResponseMixin, View):
             {'module': self.module, 'formset': formset}
         )
 
+    def post(self, request, *args, **kwargs):
+        formset = self.get_formset(data=request.POST)
+        if formset.is_valid():
+            formset.save()
+            return redirect('module_content_list', self.module.id)
+        return self.render_to_response(
+            {'module': self.module, 'formset': formset}
+        )
+
 
 class ModuleTestUpdateView(TemplateResponseMixin, View):
     """Manage tests within a module."""
