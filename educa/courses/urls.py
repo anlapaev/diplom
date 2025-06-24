@@ -29,6 +29,11 @@ urlpatterns = [
         name='course_module_update',
     ),
     path(
+        'module/<int:module_id>/lessons/',
+        views.ModuleLessonUpdateView.as_view(),
+        name='module_lesson_update',
+    ),
+    path(
         'module/<int:module_id>/content/<model_name>/create/',
         views.ContentCreateUpdateView.as_view(),
         name='module_content_create',
@@ -44,14 +49,44 @@ urlpatterns = [
         name='module_content_delete',
     ),
     path(
+        'lesson/<int:lesson_id>/step/<model_name>/create/',
+        views.StepCreateUpdateView.as_view(),
+        name='lesson_step_create',
+    ),
+    path(
+        'lesson/<int:lesson_id>/step/<model_name>/<id>/',
+        views.StepCreateUpdateView.as_view(),
+        name='lesson_step_update',
+    ),
+    path(
+        'step/<int:id>/delete/',
+        views.StepDeleteView.as_view(),
+        name='lesson_step_delete',
+    ),
+    path(
         'module/<int:module_id>/',
         views.ModuleContentListView.as_view(),
         name='module_content_list',
     ),
     path(
+        'lesson/<int:lesson_id>/',
+        views.LessonStepListView.as_view(),
+        name='lesson_step_list',
+    ),
+    path(
         'module/order/',
         views.ModuleOrderView.as_view(),
         name='module_order',
+    ),
+    path(
+        'lesson/order/',
+        views.LessonOrderView.as_view(),
+        name='lesson_order',
+    ),
+    path(
+        'step/order/',
+        views.StepOrderView.as_view(),
+        name='step_order',
     ),
     path(
         'content/order/',
