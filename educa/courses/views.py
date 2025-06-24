@@ -109,7 +109,7 @@ class CourseModuleUpdateView(TemplateResponseMixin, View):
         )
 
 
-class ModuleLessonUpdateView(TemplateResponseMixin, View):
+class ModuleLessonUpdateView(LoginRequiredMixin, TemplateResponseMixin, View):
     """View to manage lessons within a module."""
 
     template_name = 'courses/manage/lesson/formset.html'
@@ -140,7 +140,7 @@ class ModuleLessonUpdateView(TemplateResponseMixin, View):
         )
 
 
-class ModuleTestUpdateView(TemplateResponseMixin, View):
+class ModuleTestUpdateView(LoginRequiredMixin, TemplateResponseMixin, View):
     """Manage tests within a module."""
 
     template_name = 'courses/manage/test/formset.html'
@@ -162,7 +162,7 @@ class ModuleTestUpdateView(TemplateResponseMixin, View):
         )
 
 
-class ModuleAssignmentUpdateView(TemplateResponseMixin, View):
+class ModuleAssignmentUpdateView(LoginRequiredMixin, TemplateResponseMixin, View):
     """Manage practical assignments within a module."""
 
     template_name = 'courses/manage/assignment/formset.html'
@@ -196,7 +196,7 @@ class ModuleAssignmentUpdateView(TemplateResponseMixin, View):
             {'module': self.module, 'formset': formset}
         )
 
-class ContentCreateUpdateView(TemplateResponseMixin, View):
+class ContentCreateUpdateView(LoginRequiredMixin, TemplateResponseMixin, View):
     module = None
     model = None
     obj = None
@@ -233,7 +233,7 @@ class ContentCreateUpdateView(TemplateResponseMixin, View):
         )
 
 
-class StepCreateUpdateView(TemplateResponseMixin, View):
+class StepCreateUpdateView(LoginRequiredMixin, TemplateResponseMixin, View):
     """Create or update content within a lesson step."""
 
     lesson = None
@@ -283,7 +283,7 @@ class StepCreateUpdateView(TemplateResponseMixin, View):
         return self.render_to_response({'form': form, 'object': self.obj})
 
 
-class StepCreateUpdateView(TemplateResponseMixin, View):
+class StepCreateUpdateView(LoginRequiredMixin, TemplateResponseMixin, View):
     """Create or update content within a lesson step."""
 
     lesson = None
@@ -333,7 +333,7 @@ class StepCreateUpdateView(TemplateResponseMixin, View):
 
 
 
-class ContentDeleteView(View):
+class ContentDeleteView(LoginRequiredMixin, View):
     def post(self, request, id):
         content = get_object_or_404(
             Content, id=id, module__course__owner=request.user
@@ -344,7 +344,7 @@ class ContentDeleteView(View):
         return redirect('module_content_list', module.id)
 
 
-class StepDeleteView(View):
+class StepDeleteView(LoginRequiredMixin, View):
     """Delete a step and its associated content."""
 
     def post(self, request, id):
@@ -357,7 +357,7 @@ class StepDeleteView(View):
         return redirect('lesson_step_list', lesson.id)
 
 
-class TestQuestionUpdateView(TemplateResponseMixin, View):
+class TestQuestionUpdateView(LoginRequiredMixin, TemplateResponseMixin, View):
     """Manage questions within a test."""
 
     template_name = 'courses/manage/question/formset.html'
@@ -384,7 +384,7 @@ class TestQuestionUpdateView(TemplateResponseMixin, View):
         return self.render_to_response({'test': self.test, 'formset': formset})
 
 
-class QuestionAnswerUpdateView(TemplateResponseMixin, View):
+class QuestionAnswerUpdateView(LoginRequiredMixin, TemplateResponseMixin, View):
     """Manage answers for a question."""
 
     template_name = 'courses/manage/answer/formset.html'
@@ -415,7 +415,7 @@ class QuestionAnswerUpdateView(TemplateResponseMixin, View):
         )
 
 
-class ModuleContentListView(TemplateResponseMixin, View):
+class ModuleContentListView(LoginRequiredMixin, TemplateResponseMixin, View):
     template_name = 'courses/manage/module/content_list.html'
 
     def get(self, request, module_id):
@@ -425,7 +425,7 @@ class ModuleContentListView(TemplateResponseMixin, View):
         return self.render_to_response({'module': module})
 
 
-class LessonStepListView(TemplateResponseMixin, View):
+class LessonStepListView(LoginRequiredMixin, TemplateResponseMixin, View):
     """Display steps for a lesson."""
 
     template_name = 'courses/manage/lesson/step_list.html'
@@ -437,7 +437,7 @@ class LessonStepListView(TemplateResponseMixin, View):
         return self.render_to_response({'lesson': lesson})
 
 
-class ModuleOrderView(CsrfExemptMixin, JsonRequestResponseMixin, View):
+class ModuleOrderView(LoginRequiredMixin, CsrfExemptMixin, JsonRequestResponseMixin, View):
     def post(self, request):
         for id, order in self.request_json.items():
             Module.objects.filter(
@@ -446,7 +446,7 @@ class ModuleOrderView(CsrfExemptMixin, JsonRequestResponseMixin, View):
         return self.render_json_response({'saved': 'OK'})
 
 
-class ContentOrderView(CsrfExemptMixin, JsonRequestResponseMixin, View):
+class ContentOrderView(LoginRequiredMixin, CsrfExemptMixin, JsonRequestResponseMixin, View):
     def post(self, request):
         for id, order in self.request_json.items():
             Content.objects.filter(
@@ -455,7 +455,7 @@ class ContentOrderView(CsrfExemptMixin, JsonRequestResponseMixin, View):
         return self.render_json_response({'saved': 'OK'})
 
 
-class LessonOrderView(CsrfExemptMixin, JsonRequestResponseMixin, View):
+class LessonOrderView(LoginRequiredMixin, CsrfExemptMixin, JsonRequestResponseMixin, View):
     def post(self, request):
         for id, order in self.request_json.items():
             Lesson.objects.filter(
@@ -464,7 +464,7 @@ class LessonOrderView(CsrfExemptMixin, JsonRequestResponseMixin, View):
         return self.render_json_response({'saved': 'OK'})
 
 
-class StepOrderView(CsrfExemptMixin, JsonRequestResponseMixin, View):
+class StepOrderView(LoginRequiredMixin, CsrfExemptMixin, JsonRequestResponseMixin, View):
     def post(self, request):
         for id, order in self.request_json.items():
             Step.objects.filter(
@@ -473,7 +473,7 @@ class StepOrderView(CsrfExemptMixin, JsonRequestResponseMixin, View):
         return self.render_json_response({'saved': 'OK'})
 
 
-class PracticalSubmissionUpdateView(OwnerMixin, UpdateView):
+class PracticalSubmissionUpdateView(LoginRequiredMixin, OwnerMixin, UpdateView):
     model = PracticalSubmission
     fields = ['status']
     template_name = 'courses/manage/assignment/submission_form.html'
@@ -488,7 +488,7 @@ class PracticalSubmissionUpdateView(OwnerMixin, UpdateView):
         )
 
 
-class AssignmentSubmissionListView(OwnerMixin, TemplateResponseMixin, View):
+class AssignmentSubmissionListView(LoginRequiredMixin, OwnerMixin, TemplateResponseMixin, View):
     template_name = 'courses/manage/assignment/submission_list.html'
 
     def get(self, request, assignment_id):
