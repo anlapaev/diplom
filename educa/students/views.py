@@ -82,6 +82,9 @@ class StudentTestTakeView(LoginRequiredMixin, View):
 
     def dispatch(self, request, test_id):
         self.test = get_object_or_404(
+            Test.objects.prefetch_related('questions__answers'),
+            id=test_id,
+            module__course__students__in=[request.user],
             Test, id=test_id, module__course__students__in=[request.user]
         )
         return super().dispatch(request, test_id)

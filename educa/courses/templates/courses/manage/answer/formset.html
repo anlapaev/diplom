@@ -9,9 +9,21 @@
     {% csrf_token %}
     <ul id="question-answers" data-prefix="{{ formset.prefix }}">
       {% for form in formset %}
-        <li>{{ form.as_p }}</li>
+        <li>
+          {{ form.text.label_tag }} {{ form.text }}<br>
+          <label>{{ form.is_correct }} Правильный</label>
+          {% if form.fields.DELETE %}
+            <label>{{ form.DELETE }} {{ form.DELETE.label }}</label>
+          {% endif %}
+        </li>
       {% endfor %}
-      <li id="empty-form" class="hidden">{{ formset.empty_form.as_p }}</li>
+      <li id="empty-form" class="hidden">
+        {{ formset.empty_form.text.label_tag }} {{ formset.empty_form.text }}<br>
+        <label>{{ formset.empty_form.is_correct }} Правильный</label>
+        {% if formset.empty_form.fields.DELETE %}
+          <label>{{ formset.empty_form.DELETE }} {{ formset.empty_form.DELETE.label }}</label>
+        {% endif %}
+      </li>
     </ul>
     <a href="#" id="add-answer" class="secondary-button">Добавить ответ</a>
     <input type="submit" value="Сохранить ответы">

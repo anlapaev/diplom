@@ -18,6 +18,8 @@
             {{ answer.text }}
           </label><br>
         {% endfor %}
+      {% empty %}
+        <p>Вопросы отсутствуют.</p>
       {% endfor %}
       <button type="submit">Завершить</button>
     </form>

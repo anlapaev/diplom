@@ -11,9 +11,21 @@
     {% csrf_token %}
     <ul id="module-tests" data-prefix="{{ formset.prefix }}">
       {% for form in formset %}
-        <li>{{ form.as_p }}</li>
+        <li>
+          {{ form.title.label_tag }} {{ form.title }}<br>
+          {{ form.description.label_tag }} {{ form.description }}
+          {% if form.fields.DELETE %}
+            <label>{{ form.DELETE }} {{ form.DELETE.label }}</label>
+          {% endif %}
+        </li>
       {% endfor %}
-      <li id="empty-form" class="hidden">{{ formset.empty_form.as_p }}</li>
+      <li id="empty-form" class="hidden">
+        {{ formset.empty_form.title.label_tag }} {{ formset.empty_form.title }}<br>
+        {{ formset.empty_form.description.label_tag }} {{ formset.empty_form.description }}
+        {% if formset.empty_form.fields.DELETE %}
+          <label>{{ formset.empty_form.DELETE }} {{ formset.empty_form.DELETE.label }}</label>
+        {% endif %}
+      </li>
     </ul>
     <a href="#" id="add-test" class="secondary-button">Добавить тест</a>
     <input type="submit" value="Сохранить тесты">
