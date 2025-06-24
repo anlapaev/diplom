@@ -1,4 +1,3 @@
-from decouple import config
 from .base import *
 
 # Allow local origins so WebSocket connections succeed when using
@@ -32,10 +31,10 @@ CHANNEL_LAYERS = {
 }
 
 # Email configuration for password reset and other emails
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_HOST = 'smtp.yandex.ru'
-EMAIL_PORT = 465
+EMAIL_PORT = 587
 EMAIL_USE_SSL = True
-EMAIL_HOST_USER = config('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+EMAIL_HOST_USER = 'anlapaev1@yandex.ru'
+EMAIL_HOST_PASSWORD = 'RHENJ4545'
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER

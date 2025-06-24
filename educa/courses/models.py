@@ -122,7 +122,6 @@ class Step(models.Model):
         self.full_clean()
         super().save(*args, **kwargs)
 
-
 class ItemBase(models.Model):
     owner = models.ForeignKey(
         User, related_name='%(class)s_related', on_delete=models.CASCADE,
