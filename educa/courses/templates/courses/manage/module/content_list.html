@@ -64,6 +64,19 @@
         <a href="{% url "module_content_create" module.id "file" %}">Файл</a>
       </li>
     </ul>
+    <h3>Уроки модуля:</h3>
+    <ul>
+      {% for lesson in module.lessons.all %}
+        <li>
+          <a href="{% url 'lesson_step_list' lesson.id %}">
+            Урок {{ lesson.order|add:1 }}: {{ lesson.title }}
+          </a>
+        </li>
+      {% empty %}
+        <li>Уроков пока нет.</li>
+      {% endfor %}
+    </ul>
+    <p><a href="{% url 'module_lesson_update' module.id %}">Редактирование уроков</a></p>
   </div>
 {% endwith %}
 {% endblock %}
