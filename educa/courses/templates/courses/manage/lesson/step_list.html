@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% load course %}
+
+{% block title %}
+Урок {{ lesson.order|add:1 }}: {{ lesson.title }}
+{% endblock %}
+
+{% block content %}
+{% with module=lesson.module course=lesson.module.course %}
+  <h1>Курс "{{ course.title }}"</h1>
+  <div class="contents">
+    <h3>Уроки модуля</h3>
+    <ul id="lessons">
+      {% for l in module.lessons.all %}
+        <li data-id="{{ l.id }}" {% if l == lesson %}class="selected"{% endif %}>
+          <a href="{% url 'lesson_step_list' l.id %}">
+            <span>
+              Урок <span class="order">{{ l.order|add:1 }}</span>
+            </span>
+            <br>
+            {{ l.title }}
+          </a>
+        </li>
+      {% empty %}
+        <li>Уроков пока нет.</li>
+      {% endfor %}
+    </ul>
+    <p><a href="{% url 'module_lesson_update' module.id %}">
+      Редактирование уроков</a></p>
+  </div>
+  <div class="module">
+    <h2>Урок {{ lesson.order|add:1 }}: {{ lesson.title }}</h2>
+    <h3>Шаги урока:</h3>
+    <div id="lesson-steps">
+      {% for step in lesson.steps.all %}
+        <div data-id="{{ step.id }}">
+          {% with item=step.item %}
+            <p>{{ item }} ({{ item|model_name }})</p>
+            <a href="{% url 'lesson_step_update' lesson.id item|model_name item.id %}">
+              Редактировать
+            </a>
+            <form action="{% url 'lesson_step_delete' step.id %}" method="post">
+              <input type="submit" value="Удалить">
+              {% csrf_token %}
+            </form>
+          {% endwith %}
+        </div>
+      {% empty %}
+        <p>У этого урока пока нет шагов.</p>
+      {% endfor %}
+    </div>
+    <h3>Добавить новый контент:</h3>
+    <ul class="content-types">
+      <li><a href="{% url 'lesson_step_create' lesson.id 'text' %}">Текст</a></li>
+      <li><a href="{% url 'lesson_step_create' lesson.id 'image' %}">Изображение</a></li>
+      <li><a href="{% url 'lesson_step_create' lesson.id 'video' %}">Видео</a></li>
+      <li><a href="{% url 'lesson_step_create' lesson.id 'file' %}">Файл</a></li>
+    </ul>
+  </div>
+{% endwith %}
+{% endblock %}
+
+{% block include_js %}
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html5sortable/0.13.3/html5sortable.min.js"></script>
+{% endblock %}
+
+{% block domready %}
+  var options = { method: 'POST', mode: 'same-origin' };
+  const lessonOrderUrl = '{% url "lesson_order" %}';
+  sortable('#lessons', {
+    forcePlaceholderSize: true,
+    placeholderClass: 'placeholder'
+  })[0].addEventListener('sortupdate', function(e) {
+    lessonsOrder = {};
+    var lessons = document.querySelectorAll('#lessons li');
+    lessons.forEach(function(lesson, index) {
+      lessonsOrder[lesson.dataset.id] = index;
+      lesson.querySelector('.order').innerHTML = index + 1;
+    });
+    options['body'] = JSON.stringify(lessonsOrder);
+    fetch(lessonOrderUrl, options);
+  });
+  const stepOrderUrl = '{% url "step_order" %}';
+  sortable('#lesson-steps', {
+    forcePlaceholderSize: true,
+    placeholderClass: 'placeholder'
+  })[0].addEventListener('sortupdate', function(e) {
+    stepsOrder = {};
+    var steps = document.querySelectorAll('#lesson-steps div');
+    steps.forEach(function(step, index) {
+      stepsOrder[step.dataset.id] = index;
+    });
+    options['body'] = JSON.stringify(stepsOrder);
+    fetch(stepOrderUrl, options);
+  });
+{% endblock %}
