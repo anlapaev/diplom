@@ -267,6 +267,54 @@ ul#course-modules li:hover {
     cursor:move;
 }
 
+ul#module-lessons {
+    list-style:none;
+    overflow:auto;
+}
+
+ul#module-lessons li {
+    padding:20px;
+    overflow:auto;
+    cursor:move;
+    user-select:none;
+}
+
+ul#module-lessons li:nth-child(even) {
+    background:#efefef;
+}
+
+ul#module-lessons li:hover {
+    background:#ccc;
+}
+
+#lesson-steps div {
+    padding:10px 20px;
+    border:1px solid #ccc;
+    background:#fff;
+}
+
+#lesson-steps div.placeholder {
+    border:1px dashed #ccc;
+}
+
+#lesson-steps form {
+    margin:0;
+    padding:0;
+}
+
+#lesson-steps input[type=submit] {
+    color:#3fad37;
+    background:none;
+    margin:-20px 0 0;
+    padding:0;
+    float:left;
+    text-transform:none;
+}
+
+#lesson-steps div:hover {
+    cursor:move;
+}
+
 .course-info {
     border:1px solid #ccc;
     padding:0 20px;

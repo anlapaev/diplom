@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}
+Редактировать уроки модуля "{{ module.title }}"
+{% endblock %}
+
+{% block content %}
+  <h1>Редактировать уроки модуля "{{ module.title }}"</h1>
+  <div class="module">
+    <h2>Уроки модуля</h2>
+    <form method="post">
+      {{ formset.management_form }}
+      {% csrf_token %}
+      <ul id="module-lessons" data-prefix="{{ formset.prefix }}">
+        {% for form in formset %}
+          <li>{{ form.as_p }}</li>
+        {% endfor %}
+        <li id="empty-form" class="hidden">{{ formset.empty_form.as_p }}</li>
+      </ul>
+      <a href="#" id="add-lesson" class="secondary-button">Добавить урок</a>
+      <input type="submit" value="Сохранить уроки">
+    </form>
+  </div>
+{% endblock %}
+
+{% block domready %}
+  document.querySelector('#add-lesson').addEventListener('click', function(e) {
+    e.preventDefault();
+    const lessons = document.querySelector('#module-lessons');
+    const prefix = lessons.dataset.prefix;
+    const totalForms = document.querySelector('#id_' + prefix + '-TOTAL_FORMS');
+    const formCount = parseInt(totalForms.value, 10);
+    const empty = document.querySelector('#empty-form');
+    const newForm = document.createElement('li');
+    newForm.innerHTML = empty.innerHTML.replace(/__prefix__/g, formCount);
+    lessons.insertBefore(newForm, empty);
+    totalForms.value = formCount + 1;
+  });
+{% endblock %}
