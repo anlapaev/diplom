@@ -38,16 +38,34 @@
   </div>
   {% if module %}
     <div class="module">
-      {% cache 600 module_contents module %}
-        {% for content in module.contents.all %}
-          {% with item=content.item %}
-            <h2>{{ item.title }}</h2>
-            {{ item.render }}
-          {% endwith %}
+      {% if module.lessons.all|length %}
+        {% for lesson in module.lessons.all %}
+          <h2>{{ lesson.title }}</h2>
+          {% cache 600 lesson_steps lesson %}
+            {% for step in lesson.steps.all %}
+              {% with item=step.item %}
+                <h3>{{ item.title }}</h3>
+                {{ item.render }}
+              {% endwith %}
+            {% empty %}
+              <p>Шагов пока нет.</p>
+            {% endfor %}
+          {% endcache %}
         {% empty %}
-          <p>Материалов пока нет.</p>
+          <p>Уроков пока нет.</p>
         {% endfor %}
-      {% endcache %}
+      {% else %}
+        {% cache 600 module_contents module %}
+          {% for content in module.contents.all %}
+            {% with item=content.item %}
+              <h2>{{ item.title }}</h2>
+              {{ item.render }}
+            {% endwith %}
+          {% empty %}
+            <p>Материалов пока нет.</p>
+          {% endfor %}
+        {% endcache %}
+      {% endif %}
     </div>
   {% endif %}
 {% endblock %}
