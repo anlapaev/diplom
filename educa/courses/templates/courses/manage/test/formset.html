@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}
+Тесты модуля {{ module.title }}
+{% endblock %}
+
+{% block content %}
+  <h1>Тесты модуля {{ module.title }}</h1>
+  <form method="post">
+    {{ formset.management_form }}
+    {% csrf_token %}
+    <ul id="module-tests" data-prefix="{{ formset.prefix }}">
+      {% for form in formset %}
+        <li>
+          {{ form.title.label_tag }} {{ form.title }}<br>
+          {{ form.description.label_tag }} {{ form.description }}
+          {% if form.fields.DELETE %}
+            <label>{{ form.DELETE }} {{ form.DELETE.label }}</label>
+          {% endif %}
+        </li>
+      {% endfor %}
+      <li id="empty-form" class="hidden">
+        {{ formset.empty_form.title.label_tag }} {{ formset.empty_form.title }}<br>
+        {{ formset.empty_form.description.label_tag }} {{ formset.empty_form.description }}
+        {% if formset.empty_form.fields.DELETE %}
+          <label>{{ formset.empty_form.DELETE }} {{ formset.empty_form.DELETE.label }}</label>
+        {% endif %}
+      </li>
+    </ul>
+    <a href="#" id="add-test" class="secondary-button">Добавить тест</a>
+    <input type="submit" value="Сохранить тесты">
+  </form>
+{% endblock %}
+
+{% block domready %}
+  document.querySelector('#add-test').addEventListener('click', function(e) {
+    e.preventDefault();
+    const container = document.querySelector('#module-tests');
+    const prefix = container.dataset.prefix;
+    const totalForms = document.querySelector('#id_' + prefix + '-TOTAL_FORMS');
+    const formCount = parseInt(totalForms.value, 10);
+    const empty = document.querySelector('#empty-form');
+    const newForm = document.createElement('li');
+    newForm.innerHTML = empty.innerHTML.replace(/__prefix__/g, formCount);
+    container.insertBefore(newForm, empty);
+    totalForms.value = formCount + 1;
+  });
+{% endblock %}

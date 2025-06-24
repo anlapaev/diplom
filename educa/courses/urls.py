@@ -34,6 +34,21 @@ urlpatterns = [
         name='module_lesson_update',
     ),
     path(
+        'module/<int:module_id>/tests/',
+        views.ModuleTestUpdateView.as_view(),
+        name='module_test_update',
+    ),
+    path(
+        'test/<int:test_id>/questions/',
+        views.TestQuestionUpdateView.as_view(),
+        name='test_question_update',
+    ),
+    path(
+        'question/<int:question_id>/answers/',
+        views.QuestionAnswerUpdateView.as_view(),
+        name='question_answer_update',
+    ),
+    path(
         'module/<int:module_id>/content/<model_name>/create/',
         views.ContentCreateUpdateView.as_view(),
         name='module_content_create',

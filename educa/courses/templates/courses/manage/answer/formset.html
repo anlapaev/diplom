@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Ответы{% endblock %}
+
+{% block content %}
+  <h1>{{ question.text }}</h1>
+  <form method="post">
+    {{ formset.management_form }}
+    {% csrf_token %}
+    <ul id="question-answers" data-prefix="{{ formset.prefix }}">
+      {% for form in formset %}
+        <li>
+          {{ form.text.label_tag }} {{ form.text }}<br>
+          <label>{{ form.is_correct }} Правильный</label>
+          {% if form.fields.DELETE %}
+            <label>{{ form.DELETE }} {{ form.DELETE.label }}</label>
+          {% endif %}
+        </li>
+      {% endfor %}
+      <li id="empty-form" class="hidden">
+        {{ formset.empty_form.text.label_tag }} {{ formset.empty_form.text }}<br>
+        <label>{{ formset.empty_form.is_correct }} Правильный</label>
+        {% if formset.empty_form.fields.DELETE %}
+          <label>{{ formset.empty_form.DELETE }} {{ formset.empty_form.DELETE.label }}</label>
+        {% endif %}
+      </li>
+    </ul>
+    <a href="#" id="add-answer" class="secondary-button">Добавить ответ</a>
+    <input type="submit" value="Сохранить ответы">
+  </form>
+{% endblock %}
+
+{% block domready %}
+  document.querySelector('#add-answer').addEventListener('click', function(e) {
+    e.preventDefault();
+    const container = document.querySelector('#question-answers');
+    const prefix = container.dataset.prefix;
+    const totalForms = document.querySelector('#id_' + prefix + '-TOTAL_FORMS');
+    const formCount = parseInt(totalForms.value, 10);
+    const empty = document.querySelector('#empty-form');
+    const newForm = document.createElement('li');
+    newForm.innerHTML = empty.innerHTML.replace(/__prefix__/g, formCount);
+    container.insertBefore(newForm, empty);
+    totalForms.value = formCount + 1;
+  });
+{% endblock %}

@@ -43,6 +43,19 @@
       {% endfor %}
     </ul>
     <p><a href="{% url 'module_lesson_update' module.id %}">Редактирование уроков</a></p>
+    <h3>Тесты модуля:</h3>
+    <ul>
+      {% for test in module.tests.all %}
+        <li>
+          <a href="{% url 'test_question_update' test.id %}">
+            Тест {{ test.order|add:1 }}: {{ test.title }}
+          </a>
+        </li>
+      {% empty %}
+        <li>Тестов пока нет.</li>
+      {% endfor %}
+    </ul>
+    <p><a href="{% url 'module_test_update' module.id %}">Редактирование тестов</a></p>
   </div>
 {% endwith %}
 {% endblock %}

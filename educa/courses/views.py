@@ -15,8 +15,24 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 from students.forms import CourseEnrollForm
 
-from .forms import ModuleFormSet, LessonFormSet
-from .models import Content, Course, Module, Lesson, Step, Subject
+from .forms import (
+    ModuleFormSet,
+    LessonFormSet,
+    TestFormSet,
+    QuestionFormSet,
+    AnswerFormSet,
+)
+from .models import (
+    Content,
+    Course,
+    Module,
+    Lesson,
+    Step,
+    Subject,
+    Test,
+    Question,
+    Answer,
+)
 
 
 class OwnerMixin:
@@ -98,6 +114,28 @@ class ModuleLessonUpdateView(TemplateResponseMixin, View):
 
     def get_formset(self, data=None):
         return LessonFormSet(instance=self.module, data=data)
+
+    def dispatch(self, request, module_id):
+        self.module = get_object_or_404(
+            Module, id=module_id, course__owner=request.user
+        )
+        return super().dispatch(request, module_id)
+
+    def get(self, request, *args, **kwargs):
+        formset = self.get_formset()
+        return self.render_to_response(
+            {'module': self.module, 'formset': formset}
+        )
+
+
+class ModuleTestUpdateView(TemplateResponseMixin, View):
+    """Manage tests within a module."""
+
+    template_name = 'courses/manage/test/formset.html'
+    module = None
+
+    def get_formset(self, data=None):
+        return TestFormSet(instance=self.module, data=data)
 
     def dispatch(self, request, module_id):
         self.module = get_object_or_404(
@@ -280,6 +318,64 @@ class StepDeleteView(View):
         step.item.delete()
         step.delete()
         return redirect('lesson_step_list', lesson.id)
+
+
+class TestQuestionUpdateView(TemplateResponseMixin, View):
+    """Manage questions within a test."""
+
+    template_name = 'courses/manage/question/formset.html'
+    test = None
+
+    def get_formset(self, data=None):
+        return QuestionFormSet(instance=self.test, data=data)
+
+    def dispatch(self, request, test_id):
+        self.test = get_object_or_404(
+            Test, id=test_id, module__course__owner=request.user
+        )
+        return super().dispatch(request, test_id)
+
+    def get(self, request, *args, **kwargs):
+        formset = self.get_formset()
+        return self.render_to_response({'test': self.test, 'formset': formset})
+
+    def post(self, request, *args, **kwargs):
+        formset = self.get_formset(data=request.POST)
+        if formset.is_valid():
+            formset.save()
+            return redirect('test_question_update', self.test.id)
+        return self.render_to_response({'test': self.test, 'formset': formset})
+
+
+class QuestionAnswerUpdateView(TemplateResponseMixin, View):
+    """Manage answers for a question."""
+
+    template_name = 'courses/manage/answer/formset.html'
+    question = None
+
+    def get_formset(self, data=None):
+        return AnswerFormSet(instance=self.question, data=data)
+
+    def dispatch(self, request, question_id):
+        self.question = get_object_or_404(
+            Question, id=question_id, test__module__course__owner=request.user
+        )
+        return super().dispatch(request, question_id)
+
+    def get(self, request, *args, **kwargs):
+        formset = self.get_formset()
+        return self.render_to_response(
+            {'question': self.question, 'formset': formset}
+        )
+
+    def post(self, request, *args, **kwargs):
+        formset = self.get_formset(data=request.POST)
+        if formset.is_valid():
+            formset.save()
+            return redirect('test_question_update', self.question.test.id)
+        return self.render_to_response(
+            {'question': self.question, 'formset': formset}
+        )
 
 
 class ModuleContentListView(TemplateResponseMixin, View):

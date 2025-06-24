@@ -66,6 +66,14 @@
           {% endfor %}
         {% endcache %}
       {% endif %}
+      {% if module.tests.all %}
+        <h2>Тесты</h2>
+        <ul>
+        {% for test in module.tests.all %}
+          <li><a href="{% url 'student_test_take' test.id %}">{{ test.title }}</a></li>
+        {% endfor %}
+        </ul>
+      {% endif %}
     </div>
   {% endif %}
 {% endblock %}
