@@ -202,6 +202,56 @@ class StepCreateUpdateView(TemplateResponseMixin, View):
             obj.owner = request.user
             obj.save()
             if not id:
+                # new content
+                Content.objects.create(module=self.module, item=obj)
+            return redirect('module_content_list', self.module.id)
+        return self.render_to_response({'form': form, 'object': self.obj})
+
+
+class StepCreateUpdateView(TemplateResponseMixin, View):
+    """Create or update content within a lesson step."""
+
+    lesson = None
+    model = None
+    obj = None
+    template_name = 'courses/manage/content/form.html'
+
+    def get_model(self, model_name):
+        if model_name in ['text', 'video', 'image', 'file']:
+            return apps.get_model(app_label='courses', model_name=model_name)
+        return None
+
+    def get_form(self, model, *args, **kwargs):
+        Form = modelform_factory(
+            model, exclude=['owner', 'order', 'created', 'updated']
+        )
+        return Form(*args, **kwargs)
+
+    def dispatch(self, request, lesson_id, model_name, id=None):
+        self.lesson = get_object_or_404(
+            Lesson, id=lesson_id, module__course__owner=request.user
+        )
+        self.model = self.get_model(model_name)
+        if id:
+            self.obj = get_object_or_404(self.model, id=id, owner=request.user)
+        return super().dispatch(request, lesson_id, model_name, id)
+
+    def get(self, request, lesson_id, model_name, id=None):
+        form = self.get_form(self.model, instance=self.obj)
+        return self.render_to_response({'form': form, 'object': self.obj})
+
+    def post(self, request, lesson_id, model_name, id=None):
+        form = self.get_form(
+            self.model,
+            instance=self.obj,
+            data=request.POST,
+            files=request.FILES,
+        )
+        if form.is_valid():
+            obj = form.save(commit=False)
+            obj.owner = request.user
+            obj.save()
+            if not id:
                 Step.objects.create(lesson=self.lesson, item=obj)
             return redirect('lesson_step_list', self.lesson.id)
         return self.render_to_response({'form': form, 'object': self.obj})

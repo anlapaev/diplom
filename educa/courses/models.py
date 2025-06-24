@@ -118,6 +118,9 @@ class Step(models.Model):
         if self.pk is None and self.lesson.steps.count() >= 16:
             raise ValidationError('Урок не может содержать более 16 шагов.')
 
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
 
 class ItemBase(models.Model):
     owner = models.ForeignKey(
