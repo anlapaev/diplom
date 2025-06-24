@@ -158,3 +158,56 @@ class Image(ItemBase):
 
 class Video(ItemBase):
     url = models.URLField('URL видео')
+class Test(models.Model):
+    module = models.ForeignKey(
+        Module, related_name='tests', on_delete=models.CASCADE,
+        verbose_name='Модуль'
+    )
+    title = models.CharField('Название', max_length=200)
+    description = models.TextField('Описание', blank=True)
+    order = OrderField(verbose_name='Порядок', blank=True, for_fields=['module'])
+
+    class Meta:
+        ordering = ['order']
+
+    def __str__(self):
+        return f'{self.order}. {self.title}'
+
+
+class Question(models.Model):
+    test = models.ForeignKey(
+        Test, related_name='questions', on_delete=models.CASCADE,
+        verbose_name='Тест'
+    )
+    text = models.CharField('Вопрос', max_length=300)
+
+    def __str__(self):
+        return self.text
+
+
+class Answer(models.Model):
+    question = models.ForeignKey(
+        Question, related_name='answers', on_delete=models.CASCADE,
+        verbose_name='Вопрос'
+    )
+    text = models.CharField('Ответ', max_length=300)
+    is_correct = models.BooleanField('Правильный', default=False)
+
+    def __str__(self):
+        return self.text
+
+
+class TestSubmission(models.Model):
+    user = models.ForeignKey(
+        User, related_name='test_submissions', on_delete=models.CASCADE
+    )
+    test = models.ForeignKey(
+        Test, related_name='submissions', on_delete=models.CASCADE
+    )
+    data = models.JSONField('Ответы')
+    score = models.PositiveIntegerField('Результат')
+    submitted_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-submitted_at']
+
