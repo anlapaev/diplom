@@ -1,5 +1,10 @@
 @import url(//fonts.googleapis.com/css?family=Roboto:500,300,400);
 
+/* Добавлен универсальный box-sizing для корректных размеров элементов */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
 body {
     margin:0;
     font-family:'Roboto', sans-serif;
@@ -13,7 +18,9 @@ a {
 }
 
 ul {
-    float:left;
+    list-style: none;
+    margin: 0;
+    padding: 0;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -29,10 +36,26 @@ h1 {
     margin:0;
 }
 
+/* Базовый контейнер контента */
+#content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    padding: 1rem;
+    width: 100%;
+}
+
 .module {
+    /* Гибкая ширина модуля вместо фиксированной */
     padding:10px 20px;
-    float:left;
-    width:600px;
+    width:100%;
+    max-width:800px;
+    margin-bottom:1rem;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
 }
 
 .module h3 {
@@ -44,7 +67,6 @@ h1 {
 .module p {
     margin:10px 0 20px;
     width:100%;
-    float:left;
 }
 
 #header {
@@ -83,12 +105,17 @@ h1 {
 }
 
 .contents {
-    width:20%;
+    /* Боковая панель без фиксированной ширины */
+    width:100%;
+    max-width:300px;
     padding:10px;
-    float:left;
     background:#333;
-    color: #fff;
+    color:#fff;
     font-family:'Roboto', sans-serif;
+    margin-bottom:1rem;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
 }
 
 .contents ul {
@@ -137,10 +164,17 @@ h1 {
     cursor:move;
 }
 
+ul.content-types {
+    /* Используем грид для расположения карточек */
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    padding: 0;
+    margin: 0;
+}
+
 ul.content-types li {
     list-style:none;
-    float:left;
-    margin:10px;
     background:#efefef;
     padding:8px 14px;
 }
@@ -170,9 +204,8 @@ input, select, textarea {
     padding:8px 12px;
     font-size:16px;
     font-family:'Roboto', sans-serif;
-    float:left;
-    clear:both;
-    width:300px;
+    width:100%;
+    max-width:300px;
 }
 
 textarea {
@@ -180,24 +213,36 @@ textarea {
 }
 
 select {
-    width:324px;
+    width:100%;
+    max-width:324px;
 }
 
-input[type=submit], a.button {
+button,
+input[type=submit],
+a.button,
+.btn,
+a.secondary-button {
+    /* Унифицированный стиль для всех кнопок */
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    padding:0.5rem 1rem;
+    margin:0.5rem;
+    min-width:120px;
+    height:40px;
+    box-sizing:border-box;
+    font-size:16px;
+    border:none;
     border-radius:5px;
+    text-transform:uppercase;
     background:#4dcc43;
     color:#fff;
-    font-size:16px;
-    text-transform:uppercase;
-    border:none;
-    padding:10px 20px;
-    margin:20px 0;
 }
 
 a.secondary-button {
     border:3px solid #4dcc43;
-    padding:10px 20px;
-    margin:10px 0;
+    background:transparent;
+    color:#4dcc43;
 }
 
 input[type=submit]:hover, a.button:hover {
@@ -210,7 +255,8 @@ ul#course-modules {
 }
 
 ul#course-modules textarea {
-    width:600px;
+    width:100%;
+    max-width:600px;
     height:120px;
 }
 
@@ -285,7 +331,8 @@ ul#module-lessons li:hover,
     border:1px solid #ccc;
     padding:0 20px;
     margin-bottom:10px;
-    width:400px;
+    width:100%;
+    max-width:400px;
     overflow:auto;
 }
 
@@ -312,18 +359,16 @@ ul#module-lessons li:hover,
     padding:10px 20px;
     border-radius:4px;
     width:auto;
-    display:inline;
-    float:left;
+    display:inline-block;
     margin:10px 10px 0;
-    min-width:440px;
-    clear:both;
+    max-width:600px;
 }
 
 #chat .message.me {
-    display:inline;
-    float:right;
+    display:inline-block;
     background:#DCEDE0;
     color:#56A668;
+    align-self:flex-end;
 }
 
 #chat .date {
@@ -343,8 +388,6 @@ ul#module-lessons li:hover,
 #chat-input input {
     width:96%;
     position:relative;
-    float:left;
-    display:inline;
     margin-left:2%;
     margin-right:2%;
     padding-left:0;
@@ -363,4 +406,18 @@ ul#module-lessons li:hover,
 .login-form input[type=submit] {
     width:auto;
     margin-top:10px;
+}
+
+/* Адаптивность для экранов меньше 768px */
+@media (max-width: 768px) {
+    #content {
+        padding: 0.5rem;
+    }
+
+    .contents,
+    .module,
+    .course-info,
+    .login-form {
+        max-width: 100%;
+    }
 }
