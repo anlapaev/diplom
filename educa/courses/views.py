@@ -464,12 +464,10 @@ class StepOrderView(CsrfExemptMixin, JsonRequestResponseMixin, View):
         return self.render_json_response({'saved': 'OK'})
 
 
-class PracticalSubmissionUpdateView(OwnerMixin, PermissionRequiredMixin, UpdateView):
+class PracticalSubmissionUpdateView(OwnerMixin, UpdateView):
     model = PracticalSubmission
     fields = ['status']
     template_name = 'courses/manage/assignment/submission_form.html'
-    permission_required = 'courses.change_practicalsubmission'
-
     def get_queryset(self):
         qs = super().get_queryset()
         return qs.filter(assignment__module__course__owner=self.request.user)
@@ -481,9 +479,8 @@ class PracticalSubmissionUpdateView(OwnerMixin, PermissionRequiredMixin, UpdateV
         )
 
 
-class AssignmentSubmissionListView(OwnerMixin, PermissionRequiredMixin, TemplateResponseMixin, View):
+class AssignmentSubmissionListView(OwnerMixin, TemplateResponseMixin, View):
     template_name = 'courses/manage/assignment/submission_list.html'
-    permission_required = 'courses.view_practicalsubmission'
 
     def get(self, request, assignment_id):
         assignment = get_object_or_404(
