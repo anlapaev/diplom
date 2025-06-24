@@ -23,7 +23,7 @@ class SubjectViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class CourseViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Course.objects.prefetch_related('modules')
+    queryset = Course.objects.prefetch_related('modules__lessons__steps')
     serializer_class = CourseSerializer
     pagination_class = StandardPagination
 
