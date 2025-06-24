@@ -1,6 +1,6 @@
 from django.forms.models import inlineformset_factory, BaseInlineFormSet
 
-from .models import Course, Module, Lesson
+from .models import Course, Module, Lesson, Test, Question, Answer
 
 
 class ModuleBaseFormSet(BaseInlineFormSet):
@@ -38,3 +38,35 @@ LessonFormSet = inlineformset_factory(
     extra=0,
     can_delete=True,
 )
+
+class TestBaseFormSet(BaseInlineFormSet):
+    def add_fields(self, form, index):
+        super().add_fields(form, index)
+        if self.can_delete and 'DELETE' in form.fields:
+            form.fields['DELETE'].label = 'Удалить'
+
+TestFormSet = inlineformset_factory(
+    Module,
+    Test,
+    formset=TestBaseFormSet,
+    fields=['title', 'description'],
+    extra=0,
+    can_delete=True,
+)
+
+QuestionFormSet = inlineformset_factory(
+    Test,
+    Question,
+    fields=['text'],
+    extra=0,
+    can_delete=True,
+)
+
+AnswerFormSet = inlineformset_factory(
+    Question,
+    Answer,
+    fields=['text', 'is_correct'],
+    extra=0,
+    can_delete=True,
+)
+

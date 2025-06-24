@@ -1,11 +1,13 @@
-from courses.models import Course
+from courses.models import Course, Test, Question, Answer, TestSubmission
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import get_object_or_404, render
 from django.urls import reverse_lazy
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, FormView
 from django.views.generic.list import ListView
+from django.views import View
 
 from .forms import CourseEnrollForm
 
@@ -73,3 +75,41 @@ class StudentCourseDetailView(LoginRequiredMixin, DetailView):
         else:
             context['module'] = None
         return context
+
+class StudentTestTakeView(LoginRequiredMixin, View):
+    template_name = 'students/test/take.html'
+    test = None
+
+    def dispatch(self, request, test_id):
+        self.test = get_object_or_404(
+            Test, id=test_id, module__course__students__in=[request.user]
+        )
+        return super().dispatch(request, test_id)
+
+    def get(self, request, test_id):
+        return render(request, self.template_name, {'test': self.test})
+
+    def post(self, request, test_id):
+        answers = {}
+        correct = 0
+        for question in self.test.questions.all():
+            ans_ids = request.POST.getlist(f'question-{question.id}')
+            answers[str(question.id)] = ans_ids
+            correct_answers = list(
+                question.answers.filter(is_correct=True).values_list('id', flat=True)
+            )
+            if set(map(int, ans_ids)) == set(correct_answers):
+                correct += 1
+        TestSubmission.objects.create(
+            user=request.user, test=self.test, score=correct, data=answers
+        )
+        return render(
+            request,
+            self.template_name,
+            {
+                'test': self.test,
+                'score': correct,
+                'completed': True,
+            },
+        )
+

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Вопросы теста {{ test.title }}{% endblock %}
+
+{% block content %}
+  <h1>Вопросы теста "{{ test.title }}"</h1>
+  <form method="post">
+    {{ formset.management_form }}
+    {% csrf_token %}
+    <ul id="test-questions" data-prefix="{{ formset.prefix }}">
+      {% for form in formset %}
+        <li>
+          {{ form.as_p }}
+          {% if form.instance.pk %}
+            <p><a href="{% url 'question_answer_update' form.instance.id %}">Ответы</a></p>
+          {% endif %}
+        </li>
+      {% endfor %}
+      <li id="empty-form" class="hidden">{{ formset.empty_form.as_p }}</li>
+    </ul>
+    <a href="#" id="add-question" class="secondary-button">Добавить вопрос</a>
+    <input type="submit" value="Сохранить вопросы">
+  </form>
+{% endblock %}
+
+{% block domready %}
+  document.querySelector('#add-question').addEventListener('click', function(e) {
+    e.preventDefault();
+    const container = document.querySelector('#test-questions');
+    const prefix = container.dataset.prefix;
+    const totalForms = document.querySelector('#id_' + prefix + '-TOTAL_FORMS');
+    const formCount = parseInt(totalForms.value, 10);
+    const empty = document.querySelector('#empty-form');
+    const newForm = document.createElement('li');
+    newForm.innerHTML = empty.innerHTML.replace(/__prefix__/g, formCount);
+    container.insertBefore(newForm, empty);
+    totalForms.value = formCount + 1;
+  });
+{% endblock %}
