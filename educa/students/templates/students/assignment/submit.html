@@ -17,8 +17,8 @@
   {% if not submission or submission.status != 'accepted' %}
     <form method="post" enctype="multipart/form-data">
       {% csrf_token %}
-      {{ form.file.label_tag }} {{ form.file }}
-      <button type="submit">{% if submission %}Обновить файл{% else %}Отправить{% endif %}</button>
+      {{ form.as_p }}
+      <input type="submit" value="{% if submission %}Обновить файл{% else %}Отправить{% endif %}">
     </form>
   {% endif %}
 {% endblock %}
