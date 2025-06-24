@@ -468,7 +468,6 @@ class PracticalSubmissionUpdateView(OwnerMixin, UpdateView):
     model = PracticalSubmission
     fields = ['status']
     template_name = 'courses/manage/assignment/submission_form.html'
-
     def get_queryset(self):
         qs = super().get_queryset()
         return qs.filter(assignment__module__course__owner=self.request.user)
