@@ -39,6 +39,11 @@ urlpatterns = [
         name='module_test_update',
     ),
     path(
+        'module/<int:module_id>/assignments/',
+        views.ModuleAssignmentUpdateView.as_view(),
+        name='module_assignment_update',
+    ),
+    path(
         'test/<int:test_id>/questions/',
         views.TestQuestionUpdateView.as_view(),
         name='test_question_update',
@@ -102,6 +107,16 @@ urlpatterns = [
         'step/order/',
         views.StepOrderView.as_view(),
         name='step_order',
+    ),
+    path(
+        'submission/<int:pk>/status/',
+        views.PracticalSubmissionUpdateView.as_view(),
+        name='submission_status_update',
+    ),
+    path(
+        'assignment/<int:assignment_id>/submissions/',
+        views.AssignmentSubmissionListView.as_view(),
+        name='assignment_submission_list',
     ),
     path(
         'content/order/',

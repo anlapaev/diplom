@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}{{ assignment.title }}{% endblock %}
+
+{% block content %}
+  <h1>{{ assignment.title }}</h1>
+  <p>{{ assignment.description|linebreaks }}</p>
+  {% if assignment.file %}
+    <p><a href="{{ assignment.file.url }}">Скачать файл задания</a></p>
+  {% endif %}
+  {% if submission %}
+    <p>Статус: {{ submission.get_status_display }}</p>
+    {% if submission.file %}
+      <p>Ваш файл: <a href="{{ submission.file.url }}">{{ submission.file.name }}</a></p>
+    {% endif %}
+  {% endif %}
+  {% if not submission or submission.status != 'accepted' %}
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <input type="submit" value="{% if submission %}Обновить файл{% else %}Отправить{% endif %}">
+    </form>
+  {% endif %}
+{% endblock %}

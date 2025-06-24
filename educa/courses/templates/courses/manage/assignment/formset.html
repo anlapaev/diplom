@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}
+Практические задания модуля {{ module.title }}
+{% endblock %}
+
+{% block content %}
+  <h1>Практические задания модуля {{ module.title }}</h1>
+  <form method="post" enctype="multipart/form-data">
+    {{ formset.management_form }}
+    {% csrf_token %}
+    <ul id="module-assignments" data-prefix="{{ formset.prefix }}">
+      {% for form in formset %}
+        <li>
+          {{ form.title.label_tag }} {{ form.title }}<br>
+          {{ form.description.label_tag }} {{ form.description }}<br>
+          {{ form.file.label_tag }} {{ form.file }}
+          {% if form.instance.pk %}
+            <br><a href="{% url 'assignment_submission_list' form.instance.id %}">Ответы</a>
+          {% endif %}
+          {% if form.fields.DELETE %}
+            <label>{{ form.DELETE }} {{ form.DELETE.label }}</label>
+          {% endif %}
+        </li>
+      {% endfor %}
+      <li id="empty-form" class="hidden">
+        {{ formset.empty_form.title.label_tag }} {{ formset.empty_form.title }}<br>
+        {{ formset.empty_form.description.label_tag }} {{ formset.empty_form.description }}<br>
+        {{ formset.empty_form.file.label_tag }} {{ formset.empty_form.file }}
+        {% if formset.empty_form.fields.DELETE %}
+          <label>{{ formset.empty_form.DELETE }} {{ formset.empty_form.DELETE.label }}</label>
+        {% endif %}
+      </li>
+    </ul>
+    <a href="#" id="add-assignment" class="secondary-button">Добавить задание</a>
+    <input type="submit" value="Сохранить задания">
+  </form>
+{% endblock %}
+
+{% block domready %}
+  document.querySelector('#add-assignment').addEventListener('click', function(e) {
+    e.preventDefault();
+    const container = document.querySelector('#module-assignments');
+    const prefix = container.dataset.prefix;
+    const totalForms = document.querySelector('#id_' + prefix + '-TOTAL_FORMS');
+    const formCount = parseInt(totalForms.value, 10);
+    const empty = document.querySelector('#empty-form');
+    const newForm = document.createElement('li');
+    newForm.innerHTML = empty.innerHTML.replace(/__prefix__/g, formCount);
+    container.insertBefore(newForm, empty);
+    totalForms.value = formCount + 1;
+  });
+{% endblock %}

@@ -74,6 +74,14 @@
         {% endfor %}
         </ul>
       {% endif %}
+      {% if module.assignments.all %}
+        <h2>Практические задания</h2>
+        <ul>
+        {% for ass in module.assignments.all %}
+          <li><a href="{% url 'student_assignment_submit' ass.id %}">{{ ass.title }}</a></li>
+        {% endfor %}
+        </ul>
+      {% endif %}
     </div>
   {% endif %}
 {% endblock %}
