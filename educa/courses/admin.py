@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Course, Module, Subject
+from .models import Course, Module, Subject, Lesson, Step
 
 
 @admin.register(Subject)
@@ -13,6 +13,14 @@ class ModuleInline(admin.StackedInline):
     model = Module
 
 
+class LessonInline(admin.StackedInline):
+    model = Lesson
+
+
+class StepInline(admin.StackedInline):
+    model = Step
+
+
 @admin.register(Course)
 class CourseAdmin(admin.ModelAdmin):
     list_display = ['title', 'subject', 'created']
@@ -20,3 +28,20 @@ class CourseAdmin(admin.ModelAdmin):
     search_fields = ['title', 'overview']
     prepopulated_fields = {'slug': ('title',)}
     inlines = [ModuleInline]
+
+
+@admin.register(Module)
+class ModuleAdmin(admin.ModelAdmin):
+    list_display = ['title', 'course', 'order']
+    inlines = [LessonInline]
+
+
+@admin.register(Lesson)
+class LessonAdmin(admin.ModelAdmin):
+    list_display = ['title', 'module', 'order']
+    inlines = [StepInline]
+
+
+@admin.register(Step)
+class StepAdmin(admin.ModelAdmin):
+    list_display = ['id', 'lesson', 'order', 'content_type']
