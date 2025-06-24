@@ -211,3 +211,61 @@ class TestSubmission(models.Model):
     class Meta:
         ordering = ['-submitted_at']
 
+
+class PracticalAssignment(models.Model):
+    module = models.ForeignKey(
+        Module,
+        related_name='assignments',
+        on_delete=models.CASCADE,
+        verbose_name='Модуль',
+    )
+    title = models.CharField('Название', max_length=200)
+    description = models.TextField('Описание', blank=True)
+    file = models.FileField(
+        'Файл', upload_to='assignments', blank=True, null=True
+    )
+    order = OrderField(verbose_name='Порядок', blank=True, for_fields=['module'])
+
+    class Meta:
+        ordering = ['order']
+
+    def __str__(self):
+        return f'{self.order}. {self.title}'
+
+
+class PracticalSubmission(models.Model):
+    STATUS_PENDING = 'pending'
+    STATUS_ACCEPTED = 'accepted'
+    STATUS_REDO = 'redo'
+    STATUS_CHOICES = [
+        (STATUS_PENDING, 'В проверке'),
+        (STATUS_ACCEPTED, 'Принято'),
+        (STATUS_REDO, 'Переделать'),
+    ]
+
+    assignment = models.ForeignKey(
+        PracticalAssignment,
+        related_name='submissions',
+        on_delete=models.CASCADE,
+    )
+    student = models.ForeignKey(
+        User,
+        related_name='practical_submissions',
+        on_delete=models.CASCADE,
+    )
+    file = models.FileField('Файл', upload_to='submissions')
+    status = models.CharField(
+        'Статус',
+        max_length=10,
+        choices=STATUS_CHOICES,
+        default=STATUS_PENDING,
+    )
+    submitted_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-submitted_at']
+        unique_together = ('assignment', 'student')
+
+    def __str__(self):
+        return f'{self.assignment} - {self.student}'
+

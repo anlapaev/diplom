@@ -1,4 +1,12 @@
-from courses.models import Course, Test, Question, Answer, TestSubmission
+from courses.models import (
+    Course,
+    Test,
+    Question,
+    Answer,
+    TestSubmission,
+    PracticalAssignment,
+    PracticalSubmission,
+)
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -9,7 +17,7 @@ from django.views.generic.edit import CreateView, FormView
 from django.views.generic.list import ListView
 from django.views import View
 
-from .forms import CourseEnrollForm
+from .forms import CourseEnrollForm, AssignmentSubmissionForm
 
 
 class StudentRegistrationView(CreateView):
@@ -115,6 +123,69 @@ class StudentTestTakeView(LoginRequiredMixin, View):
                 'test': self.test,
                 'score': correct,
                 'completed': True,
+            },
+        )
+
+
+class StudentAssignmentSubmitView(LoginRequiredMixin, View):
+    template_name = 'students/assignment/submit.html'
+    assignment = None
+
+    def dispatch(self, request, assignment_id):
+        self.assignment = get_object_or_404(
+            PracticalAssignment,
+            id=assignment_id,
+            module__course__students__in=[request.user],
+        )
+        return super().dispatch(request, assignment_id)
+
+    def get(self, request, assignment_id):
+        submission = PracticalSubmission.objects.filter(
+            assignment=self.assignment, student=request.user
+        ).first()
+        form = AssignmentSubmissionForm(instance=submission)
+        return render(
+            request,
+            self.template_name,
+            {
+                'assignment': self.assignment,
+                'form': form,
+                'submission': submission,
+            },
+        )
+
+    def post(self, request, assignment_id):
+        submission = PracticalSubmission.objects.filter(
+            assignment=self.assignment, student=request.user
+        ).first()
+        if submission and submission.status == PracticalSubmission.STATUS_ACCEPTED:
+            form = AssignmentSubmissionForm(instance=submission)
+            return render(
+                request,
+                self.template_name,
+                {
+                    'assignment': self.assignment,
+                    'form': form,
+                    'submission': submission,
+                },
+            )
+        form = AssignmentSubmissionForm(
+            request.POST, request.FILES, instance=submission
+        )
+        if form.is_valid():
+            obj = form.save(commit=False)
+            obj.assignment = self.assignment
+            obj.student = request.user
+            obj.status = PracticalSubmission.STATUS_PENDING
+            obj.save()
+            submission = obj
+        return render(
+            request,
+            self.template_name,
+            {
+                'assignment': self.assignment,
+                'form': form,
+                'submission': submission,
             },
         )
 

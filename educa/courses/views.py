@@ -21,6 +21,7 @@ from .forms import (
     TestFormSet,
     QuestionFormSet,
     AnswerFormSet,
+    AssignmentFormSet,
 )
 from .models import (
     Content,
@@ -32,6 +33,8 @@ from .models import (
     Test,
     Question,
     Answer,
+    PracticalAssignment,
+    PracticalSubmission,
 )
 
 
@@ -149,15 +152,40 @@ class ModuleTestUpdateView(TemplateResponseMixin, View):
             {'module': self.module, 'formset': formset}
         )
 
+
+class ModuleAssignmentUpdateView(TemplateResponseMixin, View):
+    """Manage practical assignments within a module."""
+
+    template_name = 'courses/manage/assignment/formset.html'
+    module = None
+
+    def get_formset(self, data=None, files=None):
+        return AssignmentFormSet(
+            instance=self.module, data=data, files=files
+        )
+
+    def dispatch(self, request, module_id):
+        self.module = get_object_or_404(
+            Module, id=module_id, course__owner=request.user
+        )
+        return super().dispatch(request, module_id)
+
+    def get(self, request, *args, **kwargs):
+        formset = self.get_formset()
+        return self.render_to_response(
+            {'module': self.module, 'formset': formset}
+        )
+
     def post(self, request, *args, **kwargs):
-        formset = self.get_formset(data=request.POST)
+        formset = self.get_formset(
+            data=request.POST, files=request.FILES
+        )
         if formset.is_valid():
             formset.save()
             return redirect('module_content_list', self.module.id)
         return self.render_to_response(
             {'module': self.module, 'formset': formset}
         )
-
 
 class ContentCreateUpdateView(TemplateResponseMixin, View):
     module = None
@@ -434,6 +462,39 @@ class StepOrderView(CsrfExemptMixin, JsonRequestResponseMixin, View):
                 id=id, lesson__module__course__owner=request.user
             ).update(order=order)
         return self.render_json_response({'saved': 'OK'})
+
+
+class PracticalSubmissionUpdateView(OwnerMixin, PermissionRequiredMixin, UpdateView):
+    model = PracticalSubmission
+    fields = ['status']
+    template_name = 'courses/manage/assignment/submission_form.html'
+    permission_required = 'courses.change_practicalsubmission'
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        return qs.filter(assignment__module__course__owner=self.request.user)
+
+    def get_success_url(self):
+        return reverse_lazy(
+            'module_assignment_update',
+            args=[self.object.assignment.module.id],
+        )
+
+
+class AssignmentSubmissionListView(OwnerMixin, PermissionRequiredMixin, TemplateResponseMixin, View):
+    template_name = 'courses/manage/assignment/submission_list.html'
+    permission_required = 'courses.view_practicalsubmission'
+
+    def get(self, request, assignment_id):
+        assignment = get_object_or_404(
+            PracticalAssignment,
+            id=assignment_id,
+            module__course__owner=request.user,
+        )
+        submissions = assignment.submissions.select_related('student')
+        return self.render_to_response(
+            {'assignment': assignment, 'submissions': submissions}
+        )
 
 
 class CourseListView(TemplateResponseMixin, View):
