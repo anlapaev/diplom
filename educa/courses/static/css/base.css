@@ -399,3 +399,37 @@ ul#module-lessons li:hover {
     padding-left:0;
     padding-right:0;
 }
+
+ul#module-tests,
+ul#test-questions,
+ul#question-answers {
+    list-style: none;
+    overflow: auto;
+}
+
+ul#module-tests li,
+ul#test-questions li,
+ul#question-answers li {
+    padding: 20px;
+    overflow: auto;
+    user-select: none;
+}
+
+ul#module-tests li:nth-child(even),
+ul#test-questions li:nth-child(even),
+ul#question-answers li:nth-child(even) {
+    background: #efefef;
+}
+
+ul#module-tests li:hover,
+ul#test-questions li:hover,
+ul#question-answers li:hover {
+    background: #ccc;
+}
+
+ul#module-tests input[type=text],
+ul#test-questions input[type=text],
+ul#question-answers input[type=text] {
+    width: 100%;
+}
+

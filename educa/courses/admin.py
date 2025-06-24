@@ -1,6 +1,15 @@
 from django.contrib import admin
 
-from .models import Course, Module, Subject, Lesson, Step
+from .models import (
+    Course,
+    Module,
+    Subject,
+    Lesson,
+    Step,
+    Test,
+    Question,
+    Answer,
+)
 
 
 @admin.register(Subject)
@@ -19,6 +28,14 @@ class LessonInline(admin.StackedInline):
 
 class StepInline(admin.StackedInline):
     model = Step
+
+
+class QuestionInline(admin.StackedInline):
+    model = Question
+
+
+class AnswerInline(admin.StackedInline):
+    model = Answer
 
 
 @admin.register(Course)
@@ -45,3 +62,20 @@ class LessonAdmin(admin.ModelAdmin):
 @admin.register(Step)
 class StepAdmin(admin.ModelAdmin):
     list_display = ['id', 'lesson', 'order', 'content_type']
+
+@admin.register(Test)
+class TestAdmin(admin.ModelAdmin):
+    list_display = ['title', 'module', 'order']
+    inlines = [QuestionInline]
+
+
+@admin.register(Question)
+class QuestionAdmin(admin.ModelAdmin):
+    list_display = ['text', 'test']
+    inlines = [AnswerInline]
+
+
+@admin.register(Answer)
+class AnswerAdmin(admin.ModelAdmin):
+    list_display = ['text', 'question', 'is_correct']
+
