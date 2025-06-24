@@ -56,6 +56,17 @@
       {% endfor %}
     </ul>
     <p><a href="{% url 'module_test_update' module.id %}">Редактирование тестов</a></p>
+    <h3>Практические задания модуля:</h3>
+    <ul>
+      {% for ass in module.assignments.all %}
+        <li>
+          {{ ass.order|add:1 }}. {{ ass.title }}
+        </li>
+      {% empty %}
+        <li>Практических заданий пока нет.</li>
+      {% endfor %}
+    </ul>
+    <p><a href="{% url 'module_assignment_update' module.id %}">Редактирование практических заданий</a></p>
   </div>
 {% endwith %}
 {% endblock %}

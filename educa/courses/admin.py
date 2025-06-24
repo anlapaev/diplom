@@ -9,6 +9,8 @@ from .models import (
     Test,
     Question,
     Answer,
+    PracticalAssignment,
+    PracticalSubmission,
 )
 
 
@@ -78,4 +80,14 @@ class QuestionAdmin(admin.ModelAdmin):
 @admin.register(Answer)
 class AnswerAdmin(admin.ModelAdmin):
     list_display = ['text', 'question', 'is_correct']
+
+
+@admin.register(PracticalAssignment)
+class PracticalAssignmentAdmin(admin.ModelAdmin):
+    list_display = ['title', 'module', 'order']
+
+
+@admin.register(PracticalSubmission)
+class PracticalSubmissionAdmin(admin.ModelAdmin):
+    list_display = ['assignment', 'student', 'status', 'submitted_at']
 

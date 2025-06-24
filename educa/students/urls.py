@@ -34,4 +34,9 @@ urlpatterns = [
         views.StudentTestTakeView.as_view(),
         name='student_test_take',
     ),
+    path(
+        'assignment/<int:assignment_id>/',
+        views.StudentAssignmentSubmitView.as_view(),
+        name='student_assignment_submit',
+    ),
 ]
