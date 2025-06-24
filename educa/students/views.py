@@ -85,7 +85,6 @@ class StudentTestTakeView(LoginRequiredMixin, View):
             Test.objects.prefetch_related('questions__answers'),
             id=test_id,
             module__course__students__in=[request.user],
-            Test, id=test_id, module__course__students__in=[request.user]
         )
         return super().dispatch(request, test_id)
 
@@ -104,7 +103,10 @@ class StudentTestTakeView(LoginRequiredMixin, View):
             if set(map(int, ans_ids)) == set(correct_answers):
                 correct += 1
         TestSubmission.objects.create(
-            user=request.user, test=self.test, score=correct, data=answers
+            user=request.user,
+            test=self.test,
+            score=correct,
+            data=answers,
         )
         return render(
             request,
