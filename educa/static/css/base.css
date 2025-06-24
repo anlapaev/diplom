@@ -229,6 +229,30 @@ ul#course-modules li:hover {
     background:#ccc;
 }
 
+ul#module-lessons,
+#lesson-steps {
+    list-style:none;
+    overflow:auto;
+}
+
+ul#module-lessons li,
+#lesson-steps div {
+    padding:20px;
+    overflow:auto;
+    cursor:move;
+    user-select:none;
+}
+
+ul#module-lessons li:nth-child(even),
+#lesson-steps div:nth-child(even) {
+    background:#efefef;
+}
+
+ul#module-lessons li:hover,
+#lesson-steps div:hover {
+    background:#ccc;
+}
+
 #module-contents div {
     padding:10px 20px;
     border:1px solid #ccc;
@@ -318,11 +342,25 @@ ul#course-modules li:hover {
 
 #chat-input input {
     width:96%;
-    position:left;
+    position:relative;
     float:left;
     display:inline;
     margin-left:2%;
     margin-right:2%;
     padding-left:0;
     padding-right:0;
+}
+
+.login-form {
+    max-width:400px;
+    margin:0 auto;
+}
+
+.login-form p {
+    clear:both;
+}
+
+.login-form input[type=submit] {
+    width:auto;
+    margin-top:10px;
 }
