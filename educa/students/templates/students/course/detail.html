@@ -38,7 +38,7 @@
   </div>
   {% if module %}
     <div class="module">
-      {% if module.lessons.exists() %}
+      {% if module.lessons.all|length %}
         {% for lesson in module.lessons.all %}
           <h2>{{ lesson.title }}</h2>
           {% cache 600 lesson_steps lesson %}

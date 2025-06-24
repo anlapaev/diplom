@@ -30,39 +30,17 @@
   </div>
   <div class="module">
     <h2>Модуль {{ module.order|add:1 }}: {{ module.title }}</h2>
-    <h3>Содержание модуля:</h3>
-    <div id="module-contents">
-      {% for content in module.contents.all %}
-        <div data-id="{{ content.id }}">
-          {% with item=content.item %}
-            <p>{{ item }} ({{ item|model_name }})</p>
-            <a href="{% url "module_content_update" module.id item|model_name item.id %}">
-              Редактировать
-            </a>
-            <form action="{% url "module_content_delete" content.id %}" method="post">
-              <input type="submit" value="Удалить">
-              {% csrf_token %}
-            </form>
-            {% endwith %}
-        </div>
+    <h3>Уроки модуля:</h3>
+    <ul>
+      {% for lesson in module.lessons.all %}
+        <li>
+          <a href="{% url 'lesson_step_list' lesson.id %}">
+            Урок {{ lesson.order|add:1 }}: {{ lesson.title }}
+          </a>
+        </li>
       {% empty %}
-        <p>У этого модуля пока нет содержимого.</p>
+        <li>Уроков пока нет.</li>
       {% endfor %}
-    </div>
-    <h3>Добавить новый контент:</h3>
-    <ul class="content-types">
-      <li>
-        <a href="{% url "module_content_create" module.id "text" %}">Текст</a>
-      </li>
-      <li>
-        <a href="{% url "module_content_create" module.id "image" %}">Изображение</a>
-      </li>
-      <li>
-        <a href="{% url "module_content_create" module.id "video" %}">Видео</a>
-      </li>
-      <li>
-        <a href="{% url "module_content_create" module.id "file" %}">Файл</a>
-      </li>
     </ul>
     <h3>Уроки модуля:</h3>
     <ul>
@@ -112,27 +90,6 @@
 
     // send HTTP request
     fetch(moduleOrderUrl, options)
-  });
-
-  const contentOrderUrl = '{% url "content_order" %}';
-
-  sortable('#module-contents', {
-    forcePlaceholderSize: true,
-    placeholderClass: 'placeholder'
-  })[0].addEventListener('sortupdate', function(e) {
-
-    contentOrder = {};
-    var contents = document.querySelectorAll('#module-contents div');
-    contents.forEach(function (content, index) {
-      // update content index
-      contentOrder[content.dataset.id] = index;
-    });
-
-    // add new order to the HTTP request options
-    options['body'] = JSON.stringify(contentOrder);
-
-    // send HTTP request
-    fetch(contentOrderUrl, options)
   });
 
 {% endblock %}
