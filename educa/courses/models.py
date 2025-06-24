@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.template.loader import render_to_string
 
@@ -56,6 +57,24 @@ class Module(models.Model):
         return f'{self.order}. {self.title}'
 
 
+class Lesson(models.Model):
+    module = models.ForeignKey(
+        Module,
+        related_name='lessons',
+        on_delete=models.CASCADE,
+        verbose_name='Модуль',
+    )
+    title = models.CharField('Название', max_length=200)
+    description = models.TextField('Описание', blank=True)
+    order = OrderField(verbose_name='Порядок', blank=True, for_fields=['module'])
+
+    class Meta:
+        ordering = ['order']
+
+    def __str__(self):
+        return f'{self.order}. {self.title}'
+
+
 class Content(models.Model):
     module = models.ForeignKey(
         Module, related_name='contents', on_delete=models.CASCADE
@@ -73,6 +92,31 @@ class Content(models.Model):
 
     class Meta:
         ordering = ['order']
+
+
+class Step(models.Model):
+    lesson = models.ForeignKey(
+        Lesson,
+        related_name='steps',
+        on_delete=models.CASCADE,
+    )
+    content_type = models.ForeignKey(
+        ContentType,
+        on_delete=models.CASCADE,
+        limit_choices_to={
+            'model__in': ('text', 'video', 'image', 'file')
+        },
+    )
+    object_id = models.PositiveIntegerField()
+    item = GenericForeignKey('content_type', 'object_id')
+    order = OrderField(blank=True, for_fields=['lesson'])
+
+    class Meta:
+        ordering = ['order']
+
+    def clean(self):
+        if self.pk is None and self.lesson.steps.count() >= 16:
+            raise ValidationError('Урок не может содержать более 16 шагов.')
 
 
 class ItemBase(models.Model):
